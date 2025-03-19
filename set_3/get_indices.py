@@ -1,5 +1,8 @@
 import numpy as np
 def get_indices(N):
+    """
+    Retrieve indices of all non boundary points of a flattened (N,N) square array
+    """
     indices = list()
     for i in range(N*N):
         if i%N ==0:
