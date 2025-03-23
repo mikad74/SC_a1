@@ -28,13 +28,13 @@ def discretize(L,N, source_location):
                 prev_t = i * N + (j-1) % N
 
                 M[idx, idx] = (-2 / (dr_p + dr_n)*(1/dr_p + 1/dr_n)) - 2 / (dtheta * dtheta)
-                M[idx, next_r] = 2 / (dr_n * (dr_n + dr_p)) + 2/(r_curr * (dr_n + dr_p))
-                M[idx, prev_r] = 2 / (dr_p * (dr_n + dr_p)) - 2/( r_curr * (dr_n + dr_p))
+                M[idx, next_r] = 2 / (dr_n * (dr_n + dr_p)) + 1/(r_curr * (dr_n + dr_p))
+                M[idx, prev_r] = 2 / (dr_p * (dr_n + dr_p)) - 1/( r_curr * (dr_n + dr_p))
                 M[idx, next_t] = 1 / (r_curr * r_curr * dtheta * dtheta)
                 M[idx, prev_t] = 1 / (r_curr * r_curr * dtheta * dtheta)
             else:
                 M[i * N + j, i * N + j] = 1
-                b[i] = 1
+                b[q*N] = 1
     for j in range(N):
         i = 1
         r_curr = r[i]
@@ -47,8 +47,9 @@ def discretize(L,N, source_location):
         prev_t = i * N + (j-1) % N
 
         M[idx, idx] = (-2 / (dr_p + dr_n)*(1/dr_p + 1/dr_n)) - 2 / (dtheta * dtheta)
-        M[idx, next_r] = 2 / (dr_n * (dr_n + dr_p)) + 2/(r_curr * (dr_n + dr_p))
-        M[idx, prev_r] = 2 / (dr_p * (dr_n + dr_p)) - 2/( r_curr * (dr_n + dr_p))
+        M[idx, next_r] = 2 / (dr_n * (dr_n + dr_p)) + 1/(r_curr * (dr_n + dr_p))
+        M[idx, prev_r] = 2 / (dr_p * (dr_n + dr_p)) - 1/( r_curr * (dr_n + dr_p))
+        print(2 / (dr_p * (dr_n + dr_p)) - 2/( r_curr * (dr_n + dr_p)))
         M[idx, next_t] = 1 / (r_curr * r_curr * dtheta * dtheta)
         M[idx, prev_t] = 1 / (r_curr * r_curr * dtheta * dtheta)
         M[0, 0] = -N / (dr_p * dr_p)
@@ -57,23 +58,24 @@ def discretize(L,N, source_location):
         M[idx_2, idx_2] = 1
         if j != 0:
             M[j,j] = 1
-    print(M[:,q*N])
     return M, b, X, Y
 
 
 if __name__ == "__main__":
     R = 2
-    N = 20
+    N = 50
     source_coordinates = (np.sqrt(.6*.6 + 1.2*1.2), np.arctan(2))
     M, b, X, Y = discretize(R, N, source_coordinates)
     mask = np.all(M==0, axis=-1)
     Q = M[~mask]
     Q = Q[:,~mask]
+    print(M)
     c = la.solve(M, b).reshape(N,N)
     z = np.zeros((N, N+1))
     z[:,:-1] = c
     z[:,-1] = c[:, 0]
-    # fig = plt.figure()
+    z[0,:] = np.ones(N+1) * c[0,0]
+    fig = plt.figure()
     # ax = fig.add_subplot(projection="3d")
     # ax.plot_surface(X, Y, z, cmap = cm.coolwarm)
     plt.contourf(X, Y, z, vmin=0, vmax=1)

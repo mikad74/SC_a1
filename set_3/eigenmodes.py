@@ -84,9 +84,9 @@ def plot_eigenmodes(eigval, eigvec, X, Y, N, L):
             origin = np.ones_like(extended[0]) * extended[0,0]
             extended[0] = origin
             print(eigvec[:,i].reshape(N,N))
-            ax.plot_surface(X, Y, extended, label=f"{eigval[i]}", cmap=cm.coolwarm, linewidth=0, antialiased = False)
+            ax.plot_surface(X, Y, extended, label=f"{np.round(eigval[i].real,2)} [Hz]", cmap=cm.coolwarm, linewidth=0, antialiased = False)
         else:
-            ax.plot_surface(X, Y, eigvec[:, i].reshape(N,N), label=f"{eigval[i]}", cmap=cm.coolwarm, linewidth=0, antialiased = False)
+            ax.plot_surface(X, Y, eigvec[:, i].reshape(N,N), label=f"{np.round(eigval[i].real,2)} [Hz]", cmap=cm.coolwarm, linewidth=0, antialiased = False)
         plt.legend()
     p = eigval.real
     plt.show()
@@ -118,11 +118,11 @@ def animate_eigenmodes(eigval, eigvec, X, Y, N, L, rank=0, name="membrane"):
 
 if __name__ == "__main__":
     L = 1
-    N = 33
+    N = 50
     # Plot square eigenmodes
     eigval, eigvec, (X, Y) = get_eigenmodes(L, N, shape="square")
     plot_eigenmodes(eigval, eigvec, X, Y, N, L)
-    # animate_eigenmodes(eigval, eigvec, X, Y, N, L, 0)
+    animate_eigenmodes(eigval, eigvec, X, Y, N, L, 0, "eigenmodes")
     # Plot rectangular eigenmodes
     eigval, eigvec, (X, Y) = get_eigenmodes(L, N, shape="rect")
     plot_eigenmodes(eigval, eigvec, X, Y, N, L)
@@ -141,6 +141,8 @@ if __name__ == "__main__":
         time_n_stop = time.time()
         print(f"non-sparse method with size L = {L}, time: {time_n_stop - time_n_start}")
         plt.yscale("log")
+        plt.xlabel("Rank")
+        plt.ylabel("Frequency [Hz]")
         plt.plot(np.sort(eigval)[::-1], label=f"L = {L}")
     plt.legend()
     plt.show()
