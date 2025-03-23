@@ -39,8 +39,8 @@ def get_eigenmodes(L, N, shape="square", sparse=False):
 
                 r_curr = i * dr
                 M[idx, idx] = -2 / (dr * dr) - 2 / (r_curr * r_curr * dtheta * dtheta)
-                M[idx, next_r] = 1 / (dr * dr) + 1/(r_curr * dr)
-                M[idx, prev_r] = 1 / (dr * dr) - 1/(r_curr * dr)
+                M[idx, next_r] = 1 / (dr * dr) + 1/(2 * r_curr * dr)
+                M[idx, prev_r] = 1 / (dr * dr) - 1/(2 * r_curr * dr)
                 M[idx, next_t] = 1 / (r_curr * r_curr * dtheta * dtheta)
                 M[idx, prev_t] = 1 / (r_curr * r_curr * dtheta * dtheta)
         for j in range(N):
